@@ -1,5 +1,5 @@
 [package]
-name = "firmware_rename"
+name = "RustRenamer"
 version = "0.1.0"
 edition = "2021"
 
