@@ -34,7 +34,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: rustrenamer-${{steps.cargo-get}}-${{env.NOW}}-bundled-win-x64
+          name: rustrenamer-${{steps.cargo-get.outputs.metadata }}-${{env.NOW}}-bundled-win-x64
           path: |
             ${{ steps.compile.outputs.BUILT_ARCHIVE }}
             ${{ steps.compile.outputs.BUILT_CHECKSUM }}
