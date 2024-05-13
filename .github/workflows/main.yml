@@ -1,31 +1,25 @@
-name: Build and Release
+name: Rust Release
 
 on:
-  push:
-    branches: [main]
   release:
     types: [created]
 
 jobs:
-  build-and-release:
-    name: Build and Release
+  release:
+    name: release ${{ matrix.target }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
+        target: [ {name: x86_64-pc-windows-gnu} ]
     steps:
-      - name: Compile
-        id: compile
+      - uses: actions/checkout@master
+      - name: Compile and release
         uses: rust-build/rust-build.action@v1.4.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          RUSTTARGET: ${{ matrix.target }}
+          TOOLCHAIN_VERSION: nightly
+          RUSTTARGET: ${{ matrix.target.name }}
+          STATIC_LINKING: true
           EXTRA_FILES: "README.md LICENSE"
-          UPLOAD_MODE: none
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: Binary
-          path: |
-            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
