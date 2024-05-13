@@ -14,6 +14,10 @@ jobs:
       matrix:
         target: [x86_64-pc-windows-gnu]
     steps:
+      - name: Get current date
+        id: get-date
+        run: |
+          echo "NOW=$(date +'%Y%m%dT%H%M%S')" >> $GITHUB_ENV
       - uses: actions/checkout@master
       - name: Compile
         id: compile
@@ -22,7 +26,7 @@ jobs:
           RUSTTARGET: ${{ matrix.target }}
           EXTRA_FILES: "README.md LICENSE"
           UPLOAD_MODE: none
-      - name: Get package name
+      - name: Get package version
         id: cargo-get
         uses: nicolaiunrein/cargo-get@master
         with:
@@ -30,7 +34,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: rustrenamer-${{ steps.cargo-get.subcommand }}-${{env.NOW}}-bundled-win-x64
+          name: rustrenamer-${{steps.cargo-get}}-${{env.NOW}}-bundled-win-x64
           path: |
             ${{ steps.compile.outputs.BUILT_ARCHIVE }}
             ${{ steps.compile.outputs.BUILT_CHECKSUM }}
