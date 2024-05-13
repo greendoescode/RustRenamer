@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [x86_64-pc-windows-gnu, x86_64-unknown-linux-musl]
+        target: [x86_64-pc-windows-gnu]
     steps:
       - uses: actions/checkout@master
       - name: Compile
@@ -22,10 +22,15 @@ jobs:
           RUSTTARGET: ${{ matrix.target }}
           EXTRA_FILES: "README.md LICENSE"
           UPLOAD_MODE: none
+      - name: Get package name
+        id: cargo-get
+        uses: nicolaiunrein/cargo-get@master
+        with:
+          subcommand: package.version
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Binary
+          name: rustrenamer-${{ steps.cargo-get.subcommand }}-${{env.NOW}}-bundled-win-x64
           path: |
             ${{ steps.compile.outputs.BUILT_ARCHIVE }}
             ${{ steps.compile.outputs.BUILT_CHECKSUM }}
